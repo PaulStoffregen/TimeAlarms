@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For TimeAlarms
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+alarmRepeat	KEYWORD2
+alarmOnce	KEYWORD2
+timerRepeat	KEYWORD2
+timerOnce	KEYWORD2
+delay	KEYWORD2
+#######################################
+# Instances (KEYWORD2)
+#######################################
+Alarm	KEYWORD2
+#######################################
+# Constants (LITERAL1)
+#######################################
+dtINVALID_ALARM_ID	LITERAL1
+dtINVALID_TIME	LITERAL1
