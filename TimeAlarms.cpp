@@ -52,7 +52,7 @@ AlarmClass::AlarmClass()
  
 void AlarmClass::updateNextTrigger()
 {  
-  if( (value != 0) && Mode.isEnabled )
+  if( Mode.isEnabled )
   {
     time_t time = now();
     if( dtIsAlarm(Mode.alarmType) && nextTrigger <= time )   // update alarm if next trigger is not yet in the future
@@ -85,7 +85,7 @@ void AlarmClass::updateNextTrigger()
       }
       else  // its not a recognized alarm type - this should not happen 
       {
-        Mode.isEnabled = 0;  // Disable the alarm
+        Mode.isEnabled = false;  // Disable the alarm
       }	  
     }
     if( Mode.alarmType == dtTimer)
@@ -93,10 +93,6 @@ void AlarmClass::updateNextTrigger()
       // its a timer
       nextTrigger = time + value;  // add the value to previous time (this ensures delay always at least Value seconds)
     }
-  }
-  else
-  {
-    Mode.isEnabled = 0;  // Disable if the value is 0
   }
 }
 
@@ -170,8 +166,15 @@ AlarmID_t TimeAlarmsClass::alarmRepeat(time_t value, OnTick_t onTickHandler){ //
     void TimeAlarmsClass::enable(AlarmID_t ID)
     {
       if(isAllocated(ID)) {
-        Alarm[ID].Mode.isEnabled = (Alarm[ID].value != 0) && (Alarm[ID].onTickHandler != 0) ;  // only enable if value is non zero and a tick handler has been set
-        Alarm[ID].updateNextTrigger(); // trigger is updated whenever  this is called, even if already enabled	 
+	if (( ! (dtUseAbsoluteValue(Alarm[ID].Mode.alarmType) && (Alarm[ID].value == 0)) ) && (Alarm[ID].onTickHandler != NULL))
+	{
+	  Alarm[ID].Mode.isEnabled = true;  // only enable if value is non zero and a tick handler has been set (is not NULL, value is non zero ONLY for dtTimer & dtExplicitAlarm (the rest can have 0 to account for midnight))
+	  Alarm[ID].updateNextTrigger(); // trigger is updated whenever  this is called, even if already enabled	 
+	}
+	else
+	{
+	  Alarm[ID].Mode.isEnabled = false;
+	}
       }
     }
     
@@ -186,7 +189,7 @@ AlarmID_t TimeAlarmsClass::alarmRepeat(time_t value, OnTick_t onTickHandler){ //
     {
       if(isAllocated(ID))
       {
-        Alarm[ID].value = value;
+        Alarm[ID].value = value;  //note: we don't check value as we do it in enable()
         enable(ID);  // update trigger time
       }
     }
@@ -215,7 +218,7 @@ AlarmID_t TimeAlarmsClass::alarmRepeat(time_t value, OnTick_t onTickHandler){ //
       {
         Alarm[ID].Mode.isEnabled = false;
     	Alarm[ID].Mode.alarmType = dtNotAllocated;
-        Alarm[ID].onTickHandler = 0;
+        Alarm[ID].onTickHandler = NULL;
     	Alarm[ID].value = 0;
     	Alarm[ID].nextTrigger = 0;   	
       }
@@ -333,7 +336,7 @@ AlarmID_t TimeAlarmsClass::alarmRepeat(time_t value, OnTick_t onTickHandler){ //
     // attempt to create an alarm and return true if successful
     AlarmID_t TimeAlarmsClass::create( time_t value, OnTick_t onTickHandler, uint8_t isOneShot, dtAlarmPeriod_t alarmType, uint8_t isEnabled) 
     {
-      if( ! (dtIsAlarm(alarmType) && now() < SECS_PER_YEAR)) // only create alarm ids if the time is at least Jan 1 1971
+      if( ! ( (dtIsAlarm(alarmType) && now() < SECS_PER_YEAR) || (dtUseAbsoluteValue(alarmType) && (value == 0)) ) ) // only create alarm ids if the time is at least Jan 1 1971
       {  
     	for(uint8_t id = 0; id < dtNBR_ALARMS; id++)
         {
