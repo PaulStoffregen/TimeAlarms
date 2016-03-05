@@ -11,7 +11,7 @@
  * At startup the time is set to Jan 1 2011  8:29 am
  */
  
-#include <Time.h>
+#include <TimeLib.h>
 #include <TimeAlarms.h>
 
 void setup()
