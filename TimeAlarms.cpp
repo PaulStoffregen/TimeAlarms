@@ -288,6 +288,12 @@ AlarmID_t TimeAlarmsClass::alarmRepeat(time_t value, OnTick_t onTickHandler){ //
       return 255;  // This should never happen 
     }
     
+	//returns isServicing
+    uint8_t TimeAlarmsClass::getIsServicing()
+    {
+    	return isServicing;
+	}
+    
     //***********************************************************
     //* Private Methods
     
