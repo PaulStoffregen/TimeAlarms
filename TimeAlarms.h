@@ -25,13 +25,14 @@ typedef struct  {
 typedef enum  {dtNotAllocated, dtTimer, dtExplicitAlarm, dtDailyAlarm, dtWeeklyAlarm, dtLastAlarmType } dtAlarmPeriod_t ; // in future: dtBiweekly, dtMonthly, dtAnnual
 
 // macro to return true if the given type is a time based alarm, false if timer or not allocated
-#define dtIsAlarm(_type_)  (_type_ >= dtExplicitAlarm && _type_ < dtLastAlarmType) 
+#define dtIsAlarm(_type_)  (_type_ >= dtExplicitAlarm && _type_ < dtLastAlarmType)
+#define dtUseAbsoluteValue(_type_)  (_type_ == dtTimer || _type_ == dtExplicitAlarm)
 
 typedef uint8_t AlarmID_t;
 typedef AlarmID_t AlarmId;  // Arduino friendly name
 
 #define dtINVALID_ALARM_ID 255
-#define dtINVALID_TIME     0L
+#define dtINVALID_TIME     (time_t)(-1)
 
 class AlarmClass;  // forward reference
 typedef void (*OnTick_t)();  // alarm callback function typedef 
@@ -95,11 +96,12 @@ public:
   void write(AlarmID_t ID, time_t value);   // write the value (and enable) the alarm with the given ID  
   time_t read(AlarmID_t ID);                // return the value for the given timer  
   dtAlarmPeriod_t readType(AlarmID_t ID);   // return the alarm type for the given alarm ID 
-  
+
+  void free(AlarmID_t ID);                  // free the id to allow its reuse 
+
 #ifndef USE_SPECIALIST_METHODS  
 private:  // the following methods are for testing and are not documented as part of the standard library
 #endif
-  void free(AlarmID_t ID);                  // free the id to allow its reuse 
   uint8_t count();                          // returns the number of allocated timers
   time_t getNextTrigger();                  // returns the time of the next scheduled alarm
   bool isAllocated(AlarmID_t ID);           // returns true if this id is allocated  
