@@ -10,52 +10,59 @@
  *
  * At startup the time is set to Jan 1 2011  8:29 am
  */
- 
+
 #include <TimeLib.h>
 #include <TimeAlarms.h>
+
+AlarmId onceId;
 
 void setup()
 {
   Serial.begin(9600);
   setTime(8,29,0,1,1,11); // set time to Saturday 8:29:00am Jan 1 2011
-  // create the alarms 
-  Alarm.alarmRepeat(8,30,0, MorningAlarm);  // 8:30am every day
-  Alarm.alarmRepeat(17,45,0,EveningAlarm);  // 5:45pm every day 
-  Alarm.alarmRepeat(dowSaturday,8,30,30,WeeklyAlarm);  // 8:30:30 every Saturday 
 
- 
-  Alarm.timerRepeat(15, Repeats);            // timer for every 15 seconds    
-  Alarm.timerOnce(10, OnceOnly);             // called once after 10 seconds 
+  // create the alarms, to trigger at specific times
+  Alarm.alarmRepeat(8,30,0, MorningAlarm);  // 8:30am every day
+  Alarm.alarmRepeat(17,45,0,EveningAlarm);  // 5:45pm every day
+  Alarm.alarmRepeat(dowSaturday,8,30,30,WeeklyAlarm);  // 8:30:30 every Saturday
+
+  // create timers, to trigger relative to when they're created
+  Alarm.timerRepeat(15, Repeats);           // timer for every 15 seconds
+  onceId = Alarm.timerOnce(10, OnceOnly);   // called once after 10 seconds
 }
 
-void  loop(){  
+void  loop() {
   digitalClockDisplay();
   Alarm.delay(1000); // wait one second between clock display
 }
 
 // functions to be called when an alarm triggers:
 void MorningAlarm(){
-  Serial.println("Alarm: - turn lights off");    
+  Serial.println("Alarm: - turn lights off");
 }
 
 void EveningAlarm(){
-  Serial.println("Alarm: - turn lights on");           
+  Serial.println("Alarm: - turn lights on");
 }
 
 void WeeklyAlarm(){
-  Serial.println("Alarm: - its Monday Morning");      
+  Serial.println("Alarm: - its Monday Morning");
 }
 
 void ExplicitAlarm(){
-  Serial.println("Alarm: - this triggers only at the given date and time");       
+  Serial.println("Alarm: - this triggers only at the given date and time");
 }
 
 void Repeats(){
-  Serial.println("15 second timer");         
+  Serial.println("15 second timer");
 }
 
 void OnceOnly(){
-  Serial.println("This timer only triggers once");  
+  Serial.println("This timer only triggers once");
+  // use Alarm.free() to recycle the memory used by an alarm
+  // after it is no longer needed.
+  Alarm.free(onceId);
+  onceId = dtINVALID_ALARM_ID; // safest to "forget" the ID after recycled
 }
 
 void digitalClockDisplay()
@@ -64,13 +71,13 @@ void digitalClockDisplay()
   Serial.print(hour());
   printDigits(minute());
   printDigits(second());
-  Serial.println(); 
+  Serial.println();
 }
 
 void printDigits(int digits)
 {
   Serial.print(":");
-  if(digits < 10)
+  if (digits < 10)
     Serial.print('0');
   Serial.print(digits);
 }
