@@ -57,7 +57,7 @@ void AlarmClass::updateNextTrigger()
           // set the date to today and add the time given in value
           nextTrigger = value + previousMidnight(time);
         }
-      } else if(Mode.alarmType == dtWeeklyAlarm) {
+      } else if (Mode.alarmType == dtWeeklyAlarm) {
         // if this is a weekly alarm
         if ((value + previousSunday(now())) <= time) {
           // if day has passed then set for the next week.
@@ -241,7 +241,7 @@ void TimeAlarmsClass::serviceAlarms()
         } else {
           Alarm[servicedAlarmId].updateNextTrigger();
         }
-        if( TickHandler != NULL) {
+        if (TickHandler != NULL) {
           (*TickHandler)();     // call the handler
         }
       }
@@ -253,7 +253,7 @@ void TimeAlarmsClass::serviceAlarms()
 // returns the absolute time of the next scheduled alarm, or 0 if none
 time_t TimeAlarmsClass::getNextTrigger()
 {
-  time_t nextTrigger = 0xffffffff;  // the max time value
+  time_t nextTrigger = (time_t)0xffffffff;  // the max time value
 
   for (uint8_t id = 0; id < dtNBR_ALARMS; id++) {
     if (isAllocated(id)) {
@@ -262,7 +262,7 @@ time_t TimeAlarmsClass::getNextTrigger()
       }
     }
   }
-  return nextTrigger == 0xffffffff ? 0 : nextTrigger;
+  return nextTrigger == (time_t)0xffffffff ? 0 : nextTrigger;
 }
 
 // attempt to create an alarm and return true if successful
