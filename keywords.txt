@@ -5,19 +5,24 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-
+AlarmId	LITERAL2
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
+TimeAlarms	KEYWORD2
+triggerOnce	KEYWORD2
 alarmRepeat	KEYWORD2
 alarmOnce	KEYWORD2
 timerRepeat	KEYWORD2
 timerOnce	KEYWORD2
+enable	KEYWORD2
+disable	KEYWORD2
+free	KEYWORD2
 delay	KEYWORD2
 #######################################
 # Instances (KEYWORD2)
 #######################################
-Alarm	KEYWORD2
+Alarm	KEYWORD1
 #######################################
 # Constants (LITERAL1)
 #######################################
