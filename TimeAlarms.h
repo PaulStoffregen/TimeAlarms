@@ -92,7 +92,7 @@ public:
   void enable(AlarmID_t ID);                // enable the alarm to trigger
   void disable(AlarmID_t ID);               // prevent the alarm from triggering   
   AlarmID_t getTriggeredAlarmId();          // returns the currently triggered  alarm id
-  void getIsServicing();					// returns isServicing
+  bool getIsServicing();                    // returns isServicing
   void write(AlarmID_t ID, time_t value);   // write the value (and enable) the alarm with the given ID  
   time_t read(AlarmID_t ID);                // return the value for the given timer  
   dtAlarmPeriod_t readType(AlarmID_t ID);   // return the alarm type for the given alarm ID 

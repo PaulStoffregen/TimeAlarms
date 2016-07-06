@@ -292,10 +292,10 @@ AlarmID_t TimeAlarmsClass::alarmRepeat(time_t value, OnTick_t onTickHandler){ //
     }
     
 	//returns isServicing
-    uint8_t TimeAlarmsClass::getIsServicing()
+    bool TimeAlarmsClass::getIsServicing()
     {
     	return isServicing;
-	}
+    }
     
     //***********************************************************
     //* Private Methods
