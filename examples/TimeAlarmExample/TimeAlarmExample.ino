@@ -12,7 +12,7 @@
  */
 
 // Questions?  Ask them here:
-// http://forum.arduino.cc/index.php?topic=37693.0
+// http://forum.arduino.cc/index.php?topic=66054.0
 
 #include <TimeLib.h>
 #include <TimeAlarms.h>
