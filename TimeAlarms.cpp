@@ -188,14 +188,14 @@ AlarmID_t TimeAlarmsClass::getTriggeredAlarmId()
 void TimeAlarmsClass::delay(unsigned long ms)
 {
   unsigned long start = millis();
-  while( millis() - start  <= ms) {
+  while (millis() - start  <= ms) {
     serviceAlarms();
   }
 }
 
 void TimeAlarmsClass::waitForDigits( uint8_t Digits, dtUnits_t Units)
 {
-  while(Digits != getDigitsNow(Units) ) {
+  while (Digits != getDigitsNow(Units)) {
     serviceAlarms();
   }
 }
@@ -265,7 +265,7 @@ time_t TimeAlarmsClass::getNextTrigger()
 }
 
 // attempt to create an alarm and return true if successful
-AlarmID_t TimeAlarmsClass::create(time_t value, OnTick_t onTickHandler, uint8_t isOneShot, dtAlarmPeriod_t alarmType, uint8_t isEnabled)
+AlarmID_t TimeAlarmsClass::create(time_t value, OnTick_t onTickHandler, uint8_t isOneShot, dtAlarmPeriod_t alarmType)
 {
   if ( ! ( (dtIsAlarm(alarmType) && now() < SECS_PER_YEAR) || (dtUseAbsoluteValue(alarmType) && (value == 0)) ) ) {
     // only create alarm ids if the time is at least Jan 1 1971
@@ -276,7 +276,7 @@ AlarmID_t TimeAlarmsClass::create(time_t value, OnTick_t onTickHandler, uint8_t 
         Alarm[id].Mode.isOneShot = isOneShot;
         Alarm[id].Mode.alarmType = alarmType;
         Alarm[id].value = value;
-        isEnabled ?  enable(id) : disable(id);
+        enable(id);
         return id;  // alarm created ok
       }
     }
