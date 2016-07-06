@@ -18,11 +18,6 @@
               - this fixes bug in repeating weekly alarms - thanks to Vincent Valdy and draythomp for testing
 */
 
-//extern "C" {
-//#include <string.h> // for memset
-//}
-
-#include <Arduino.h>
 #include "TimeAlarms.h"
 
 #define IS_ONESHOT  true   // constants used in arguments to create method
@@ -92,90 +87,6 @@ TimeAlarmsClass::TimeAlarmsClass()
   for(uint8_t id = 0; id < dtNBR_ALARMS; id++) {
     free(id);   // ensure all Alarms are cleared and available for allocation
   }
-}
-
-// this method creates a trigger at the given absolute time_t
-// it replaces the call to alarmOnce with values greater than a week
-AlarmID_t TimeAlarmsClass::triggerOnce(time_t value, OnTick_t onTickHandler)
-{
-  // trigger once at the given time_t
-  if (value > 0) {
-    return create( value, onTickHandler, IS_ONESHOT, dtExplicitAlarm );
-  } else {
-    return dtINVALID_ALARM_ID; // dont't allocate if the time is greater than one day
-  }
-}
-
-// this method will now return an error if the value is greater than one day
-// use DOW methods for weekly alarms
-AlarmID_t TimeAlarmsClass::alarmOnce(time_t value, OnTick_t onTickHandler)
-{
-  // trigger once at the given time of day
-  if (value <= SECS_PER_DAY) {
-    return create( value, onTickHandler, IS_ONESHOT, dtDailyAlarm );
-  } else {
-    return dtINVALID_ALARM_ID; // dont't allocate if the time is greater than one day
-  }
-}
-
-// as above with HMS arguments
-AlarmID_t TimeAlarmsClass::alarmOnce(const int H, const int M, const int S, OnTick_t onTickHandler)
-{
-   return create( AlarmHMS(H,M,S), onTickHandler, IS_ONESHOT, dtDailyAlarm );
-}
-
-// as above, with day of week
-AlarmID_t TimeAlarmsClass::alarmOnce(const timeDayOfWeek_t DOW, const int H, const int M, const int S, OnTick_t onTickHandler)
-{
-   return create( (DOW-1) * SECS_PER_DAY + AlarmHMS(H,M,S), onTickHandler, IS_ONESHOT, dtWeeklyAlarm );
-}
-
-// this method will now return an error if the value is greater than one day
-// use DOW methods for weekly alarms
-AlarmID_t TimeAlarmsClass::alarmRepeat(time_t value, OnTick_t onTickHandler)
-{
-  // trigger daily at the given time
-  if (value <= SECS_PER_DAY) {
-    return create( value, onTickHandler, IS_REPEAT, dtDailyAlarm );
-  } else {
-    return dtINVALID_ALARM_ID; // dont't allocate if the time is greater than one day
-  }
-}
-
-// as above with HMS arguments
-AlarmID_t TimeAlarmsClass::alarmRepeat(const int H, const int M, const int S, OnTick_t onTickHandler)
-{
-  return create( AlarmHMS(H,M,S), onTickHandler, IS_REPEAT, dtDailyAlarm );
-}
-
-// as above, with day of week
-AlarmID_t TimeAlarmsClass::alarmRepeat(const timeDayOfWeek_t DOW, const int H, const int M, const int S, OnTick_t onTickHandler)
-{
-  return create((DOW-1) * SECS_PER_DAY + AlarmHMS(H,M,S), onTickHandler, IS_REPEAT, dtWeeklyAlarm );
-}
-
-// trigger once after the given number of seconds
-AlarmID_t TimeAlarmsClass::timerOnce(time_t value, OnTick_t onTickHandler)
-{
-  return create( value, onTickHandler, IS_ONESHOT, dtTimer );
-}
-
-// As above with HMS arguments
-AlarmID_t TimeAlarmsClass::timerOnce(const int H,  const int M,  const int S, OnTick_t onTickHandler)
-{
-  return create( AlarmHMS(H,M,S), onTickHandler, IS_ONESHOT, dtTimer );
-}
-
-// trigger after the given number of seconds continuously
-AlarmID_t TimeAlarmsClass::timerRepeat(time_t value, OnTick_t onTickHandler)
-{
-  return create( value, onTickHandler, IS_REPEAT, dtTimer);
-}
-
-// trigger after the given number of seconds continuously
-AlarmID_t TimeAlarmsClass::timerRepeat(const int H,  const int M,  const int S, OnTick_t onTickHandler)
-{
-  return create( AlarmHMS(H,M,S), onTickHandler, IS_REPEAT, dtTimer);
 }
 
 void TimeAlarmsClass::enable(AlarmID_t ID)
@@ -259,7 +170,7 @@ bool TimeAlarmsClass::isAlarm(AlarmID_t ID)
 // returns true if this id is allocated
 bool TimeAlarmsClass::isAllocated(AlarmID_t ID)
 {
-  return( ID < dtNBR_ALARMS && Alarm[ID].Mode.alarmType != dtNotAllocated );
+  return (ID < dtNBR_ALARMS && Alarm[ID].Mode.alarmType != dtNotAllocated);
 }
 
 // returns the currently triggered alarm id
