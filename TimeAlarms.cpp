@@ -116,6 +116,7 @@ void TimeAlarmsClass::write(AlarmID_t ID, time_t value)
 {
   if (isAllocated(ID)) {
     Alarm[ID].value = value;  //note: we don't check value as we do it in enable()
+    Alarm[ID].nextTrigger = 0; // clear out previous trigger time (see issue #12)
     enable(ID);  // update trigger time
   }
 }
