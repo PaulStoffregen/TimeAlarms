@@ -11,6 +11,9 @@
  * At startup the time is set to Jan 1 2011  8:29 am
  */
 
+// Questions?  Ask them here:
+// http://forum.arduino.cc/index.php?topic=37693.0
+
 #include <TimeLib.h>
 #include <TimeAlarms.h>
 
