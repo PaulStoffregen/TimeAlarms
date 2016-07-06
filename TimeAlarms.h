@@ -6,7 +6,11 @@
 #include <Arduino.h>
 #include "TimeLib.h"
 
+#if defined(__AVR__)
 #define dtNBR_ALARMS 6   // max is 255
+#else
+#define dtNBR_ALARMS 12  // assume non-AVR has more memory
+#endif
 
 #define USE_SPECIALIST_METHODS  // define this for testing
 
