@@ -29,7 +29,6 @@ extern "C" {
 #endif
 
 #include "TimeAlarms.h"
-#include "Time.h"
 
 #define IS_ONESHOT  true   // constants used in arguments to create method
 #define IS_REPEAT   false 
