@@ -1,7 +1,26 @@
-//Requires NTP Client library from https://github.com/gmag11/NtpClient
+/*
+ * TimeAlarm_ESP8266.ino
+ *
+ * This example calls two repetitive timers, one every
+ * 5 seconds and one every 22 seconds. A single shot
+ * timer is triggered after 58 seconds too. It finishes
+ * 5 senconds timer
+ *
+ * An alarm is triggered 1 minute after current time.
+ *
+ * At startup the time is syncd to NTP server, so
+ * it requires NTP Client library from 
+ * https://github.com/gmag11/NtpClient
+ *
+ * It uses a class to initalize triggers
+ * to show how to use class methods as callbacks.
+ *
+ */
+
+#define YOUR_WIFI_SSID "Your_SSID"
+#define YOUR_WIFI_SSID "Your_Pw"
 
 #include <TimeLib.h>
-//#include "WifiConfig.h"
 #include <NtpClientLib.h>
 #include <ESP8266WiFi.h>
 #include <TimeAlarms.h>
