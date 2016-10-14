@@ -265,6 +265,15 @@ time_t TimeAlarmsClass::getNextTrigger()
   return nextTrigger == (time_t)0xffffffff ? 0 : nextTrigger;
 }
 
+time_t getNextTrigger(AlarmID_t ID)
+{
+  if (isAllocated(ID)) {
+    return Alarm[ID].nextTrigger;
+  } else {
+    return 0;
+  }
+}
+
 // attempt to create an alarm and return true if successful
 AlarmID_t TimeAlarmsClass::create(time_t value, OnTick_t onTickHandler, uint8_t isOneShot, dtAlarmPeriod_t alarmType)
 {
@@ -287,4 +296,3 @@ AlarmID_t TimeAlarmsClass::create(time_t value, OnTick_t onTickHandler, uint8_t 
 
 // make one instance for the user to use
 TimeAlarmsClass Alarm = TimeAlarmsClass() ;
-

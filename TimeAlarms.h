@@ -159,6 +159,7 @@ private:  // the following methods are for testing and are not documented as par
 #endif
   uint8_t count();                          // returns the number of allocated timers
   time_t getNextTrigger();                  // returns the time of the next scheduled alarm
+  time_t getNextTrigger(AlarmID_t ID);      // returns the time of scheduled alarm
   bool isAllocated(AlarmID_t ID);           // returns true if this id is allocated
   bool isAlarm(AlarmID_t ID);               // returns true if id is for a time based alarm, false if its a timer or not allocated
 };
