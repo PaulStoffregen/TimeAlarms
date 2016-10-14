@@ -265,7 +265,7 @@ time_t TimeAlarmsClass::getNextTrigger()
   return nextTrigger == (time_t)0xffffffff ? 0 : nextTrigger;
 }
 
-time_t getNextTrigger(AlarmID_t ID)
+time_t TimeAlarmsClass::getNextTrigger(AlarmID_t ID)
 {
   if (isAllocated(ID)) {
     return Alarm[ID].nextTrigger;
