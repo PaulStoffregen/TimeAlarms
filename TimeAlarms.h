@@ -6,10 +6,14 @@
 #include <Arduino.h>
 #include "TimeLib.h"
 
+#if !defined(dtNBR_ALARMS )
 #if defined(__AVR__)
 #define dtNBR_ALARMS 6   // max is 255
+#elif defined(ESP8266)
+#define dtNBR_ALARMS 20  // for esp8266 chip - max is 255
 #else
 #define dtNBR_ALARMS 12  // assume non-AVR has more memory
+#endif
 #endif
 
 #define USE_SPECIALIST_METHODS  // define this for testing
