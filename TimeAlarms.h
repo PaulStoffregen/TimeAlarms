@@ -8,7 +8,7 @@
 
 #if defined(__AVR__)
 #define dtNBR_ALARMS 6   // max is 255
-#else if defined(ESP8266)
+#elif defined(ESP8266)
 #define dtNBR_ALARMS 50  // for esp8266 chip - max is 255
 #else
 #define dtNBR_ALARMS 12  // assume non-AVR has more memory
