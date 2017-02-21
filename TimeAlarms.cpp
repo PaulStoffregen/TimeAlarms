@@ -189,9 +189,9 @@ AlarmID_t TimeAlarmsClass::getTriggeredAlarmId()
 void TimeAlarmsClass::delay(unsigned long ms)
 {
   unsigned long start = millis();
-  while (millis() - start  <= ms) {
+  do {
     serviceAlarms();
-  }
+  } while (millis() - start  <= ms);
 }
 
 void TimeAlarmsClass::waitForDigits( uint8_t Digits, dtUnits_t Units)
