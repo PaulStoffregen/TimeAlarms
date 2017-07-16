@@ -189,8 +189,12 @@ AlarmID_t TimeAlarmsClass::getTriggeredAlarmId()
 void TimeAlarmsClass::delay(unsigned long ms)
 {
   unsigned long start = millis();
-  while (millis() - start  <= ms) {
+  while (millis() - start  <= (ms > 500 ? 500 : ms)) {
     serviceAlarms();
+  }
+  // do waiting over delay() function, else watchdog will be triggered
+  if(ms > 500) {
+    delay(ms - 500);
   }
 }
 
