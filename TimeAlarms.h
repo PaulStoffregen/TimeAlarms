@@ -143,28 +143,29 @@ public:
   void delay(unsigned long ms);
 
   // utility methods
-  uint8_t getDigitsNow( dtUnits_t Units);         // returns the current digit value for the given time unit
+  uint8_t getDigitsNow( dtUnits_t Units) const;         // returns the current digit value for the given time unit
   void waitForDigits( uint8_t Digits, dtUnits_t Units);
   void waitForRollover(dtUnits_t Units);
 
   // low level methods
   void enable(AlarmID_t ID);                // enable the alarm to trigger
   void disable(AlarmID_t ID);               // prevent the alarm from triggering
-  AlarmID_t getTriggeredAlarmId();          // returns the currently triggered  alarm id
-  bool getIsServicing();                    // returns isServicing
+  AlarmID_t getTriggeredAlarmId() const;          // returns the currently triggered  alarm id
+  bool getIsServicing() const;                    // returns isServicing
   void write(AlarmID_t ID, time_t value);   // write the value (and enable) the alarm with the given ID
-  time_t read(AlarmID_t ID);                // return the value for the given timer
-  dtAlarmPeriod_t readType(AlarmID_t ID);   // return the alarm type for the given alarm ID
+  time_t read(AlarmID_t ID) const;                // return the value for the given timer
+  dtAlarmPeriod_t readType(AlarmID_t ID) const;   // return the alarm type for the given alarm ID
 
   void free(AlarmID_t ID);                  // free the id to allow its reuse
 
 #ifndef USE_SPECIALIST_METHODS
 private:  // the following methods are for testing and are not documented as part of the standard library
 #endif
-  uint8_t count();                          // returns the number of allocated timers
-  time_t getNextTrigger();                  // returns the time of the next scheduled alarm
-  bool isAllocated(AlarmID_t ID);           // returns true if this id is allocated
-  bool isAlarm(AlarmID_t ID);               // returns true if id is for a time based alarm, false if its a timer or not allocated
+  uint8_t count() const;                          // returns the number of allocated timers
+  time_t getNextTrigger() const;                  // returns the time of the next scheduled alarm
+  time_t getNextTrigger(AlarmID_t ID) const;      // returns the time of scheduled alarm
+  bool isAllocated(AlarmID_t ID) const;           // returns true if this id is allocated
+  bool isAlarm(AlarmID_t ID) const;               // returns true if id is for a time based alarm, false if its a timer or not allocated
 };
 
 extern TimeAlarmsClass Alarm;  // make an instance for the user

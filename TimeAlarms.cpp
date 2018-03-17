@@ -122,7 +122,7 @@ void TimeAlarmsClass::write(AlarmID_t ID, time_t value)
 }
 
 // return the value for the given alarm ID
-time_t TimeAlarmsClass::read(AlarmID_t ID)
+time_t TimeAlarmsClass::read(AlarmID_t ID) const
 {
   if (isAllocated(ID)) {
     return Alarm[ID].value ;
@@ -132,7 +132,7 @@ time_t TimeAlarmsClass::read(AlarmID_t ID)
 }
 
 // return the alarm type for the given alarm ID
-dtAlarmPeriod_t TimeAlarmsClass::readType(AlarmID_t ID)
+dtAlarmPeriod_t TimeAlarmsClass::readType(AlarmID_t ID) const
 {
   if (isAllocated(ID)) {
     return (dtAlarmPeriod_t)Alarm[ID].Mode.alarmType ;
@@ -153,7 +153,7 @@ void TimeAlarmsClass::free(AlarmID_t ID)
 }
 
 // returns the number of allocated timers
-uint8_t TimeAlarmsClass::count()
+uint8_t TimeAlarmsClass::count() const
 {
   uint8_t c = 0;
   for(uint8_t id = 0; id < dtNBR_ALARMS; id++) {
@@ -163,20 +163,20 @@ uint8_t TimeAlarmsClass::count()
 }
 
 // returns true only if id is allocated and the type is a time based alarm, returns false if not allocated or if its a timer
-bool TimeAlarmsClass::isAlarm(AlarmID_t ID)
+bool TimeAlarmsClass::isAlarm(AlarmID_t ID) const
 {
   return( isAllocated(ID) && dtIsAlarm(Alarm[ID].Mode.alarmType) );
 }
 
 // returns true if this id is allocated
-bool TimeAlarmsClass::isAllocated(AlarmID_t ID)
+bool TimeAlarmsClass::isAllocated(AlarmID_t ID) const
 {
   return (ID < dtNBR_ALARMS && Alarm[ID].Mode.alarmType != dtNotAllocated);
 }
 
 // returns the currently triggered alarm id
 // returns dtINVALID_ALARM_ID if not invoked from within an alarm handler
-AlarmID_t TimeAlarmsClass::getTriggeredAlarmId()
+AlarmID_t TimeAlarmsClass::getTriggeredAlarmId() const
 {
   if (isServicing) {
     return servicedAlarmId;  // new private data member used instead of local loop variable i in serviceAlarms();
@@ -211,7 +211,7 @@ void TimeAlarmsClass::waitForRollover( dtUnits_t Units)
   waitForDigits(0, Units);
 }
 
-uint8_t TimeAlarmsClass::getDigitsNow( dtUnits_t Units)
+uint8_t TimeAlarmsClass::getDigitsNow( dtUnits_t Units) const
 {
   time_t time = now();
   if (Units == dtSecond) return numberOfSeconds(time);
@@ -222,7 +222,7 @@ uint8_t TimeAlarmsClass::getDigitsNow( dtUnits_t Units)
 }
 
 //returns isServicing
-bool TimeAlarmsClass::getIsServicing()
+bool TimeAlarmsClass::getIsServicing() const
 {
   return isServicing;
 }
@@ -252,7 +252,7 @@ void TimeAlarmsClass::serviceAlarms()
 }
 
 // returns the absolute time of the next scheduled alarm, or 0 if none
-time_t TimeAlarmsClass::getNextTrigger()
+time_t TimeAlarmsClass::getNextTrigger() const
 {
   time_t nextTrigger = 0;
 
@@ -267,6 +267,15 @@ time_t TimeAlarmsClass::getNextTrigger()
     }
   }
   return nextTrigger;
+}
+
+time_t TimeAlarmsClass::getNextTrigger(AlarmID_t ID) const
+{
+  if (isAllocated(ID)) {
+    return Alarm[ID].nextTrigger;
+  } else {
+    return 0;
+  }
 }
 
 // attempt to create an alarm and return true if successful
@@ -291,4 +300,3 @@ AlarmID_t TimeAlarmsClass::create(time_t value, OnTick_t onTickHandler, uint8_t 
 
 // make one instance for the user to use
 TimeAlarmsClass Alarm = TimeAlarmsClass() ;
-
