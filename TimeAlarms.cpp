@@ -254,16 +254,19 @@ void TimeAlarmsClass::serviceAlarms()
 // returns the absolute time of the next scheduled alarm, or 0 if none
 time_t TimeAlarmsClass::getNextTrigger()
 {
-  time_t nextTrigger = (time_t)0xffffffff;  // the max time value
+  time_t nextTrigger = 0;
 
   for (uint8_t id = 0; id < dtNBR_ALARMS; id++) {
     if (isAllocated(id)) {
-      if (Alarm[id].nextTrigger <  nextTrigger) {
+      if (nextTrigger == 0) {
+        nextTrigger = Alarm[id].nextTrigger;
+      }
+      else if (Alarm[id].nextTrigger <  nextTrigger) {
         nextTrigger = Alarm[id].nextTrigger;
       }
     }
   }
-  return nextTrigger == (time_t)0xffffffff ? 0 : nextTrigger;
+  return nextTrigger;
 }
 
 // attempt to create an alarm and return true if successful
