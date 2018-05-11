@@ -7,6 +7,8 @@ Tasks scheduled at a particular time of day are called Alarms,
 tasks scheduled after an interval of time has elapsed are called Timers.
 These tasks can be created to continuously repeat or to occur once only.  
 
+## API
+
 Here is how you create an alarm to trigger a task repeatedly at a particular time of day:
   `Alarm.alarmRepeat(8,30,0, MorningAlarm);`
 This would call the function MorningAlarm()  at 8:30 am every day.
