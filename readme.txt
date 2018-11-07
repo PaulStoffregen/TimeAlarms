@@ -19,6 +19,12 @@ Alarms can be specified to trigger a task repeatedly at a particular day of week
   Alarm.alarmRepeat(dowMonday, 9,15,0, MondayMorningAlarm);  
 This would call the function WeeklyAlarm() at 9:15am every Monday.
 
+You can also specify an alarm to trigger every week on multiple days of week at given time of day:
+  timeDayOfWeek_t dows[] = {dowMonday, dowFriday};
+  Alarm.alarmRepeat(dows, 2, 9,15,0, MondayFridayMorningAlarm);
+This would call the function MondayFridayMorningAlarm() at 9:15am every Monday and Friday.
+Note that the second parameter need to be the number of day of the week the alarm should trigger on.
+
 If you want the alarm to trigger once only on a particular day and time you can do this:
    Alarm.alarmOnce(dowMonday, 9,15,0, MondayMorningAlarm);  
 This would call the function MondayMorning() Alarm on the next Monday at 9:15am.
@@ -195,7 +201,7 @@ If the system time is reset to a later time (for example one hour ahead) then al
 alarms and timers will occur one hour later.
 If the system time is set backwards (for example one hour back) then the alarms and timers will occur an hour earlier.
 If the time is reset before the time a task was scheduled, then the task will be triggered on the next service (the next call to Alarm.delay).
-This is  the expected behaviour for Alarms – tasks scheduled for a specific time of day will trigger at that time, but the affect on timers may not be intuitive. If a timer is scheduled to trigger in 5 minutes time and the clock is set ahead by one hour, that timer will not trigger until one hour and 5 minutes has elapsed.
+This is  the expected behaviour for Alarms ï¿½ tasks scheduled for a specific time of day will trigger at that time, but the affect on timers may not be intuitive. If a timer is scheduled to trigger in 5 minutes time and the clock is set ahead by one hour, that timer will not trigger until one hour and 5 minutes has elapsed.
 
 Q: What  is the valid range of times supported by these libraries?
 A: The time library is intended to handle times from Jan 1 1970 through Jan 19 2038.
