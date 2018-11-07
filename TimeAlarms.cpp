@@ -66,6 +66,37 @@ void AlarmClass::updateNextTrigger()
           // set the date to this week today and add the time given in value
           nextTrigger = value + previousSunday(time);
         }
+      }
+      else if (Mode.alarmType == dtMultiWeeklyAlarm) {
+        // if this is a multi weekly alarm
+        boolean updated = false;
+
+        for (int dayIndex = (dowSunday-1); dayIndex != (dowSaturday-1); dayIndex++) {
+          // find the next alarm day this week
+          timeDayOfWeek_t day = static_cast<timeDayOfWeek_t>(dayIndex);
+          if (isSetFor(day)) {
+            time_t dayTrigger = value + previousSunday(time) + (day-1) * SECS_PER_DAY;
+
+            if (dayTrigger > time) {
+              nextTrigger = dayTrigger;
+              updated = true;
+              break;
+            }
+          }
+        }
+
+        if (!updated) {
+          // If all set alarm for this week are passed
+          for (int dayIndex = (dowSunday-1); dayIndex != (dowSaturday-1); dayIndex++) {
+            // find the next alarm day next week
+            timeDayOfWeek_t day = static_cast<timeDayOfWeek_t>(dayIndex);
+            if (isSetFor(day)) {
+              nextTrigger = value + nextSunday(time) + (day-1) * SECS_PER_DAY;
+              updated = true;
+              break;
+            }
+          }
+        }
       } else {
         // its not a recognized alarm type - this should not happen
         Mode.isEnabled = false;  // Disable the alarm
@@ -75,6 +106,73 @@ void AlarmClass::updateNextTrigger()
       // its a timer
       nextTrigger = time + value;  // add the value to previous time (this ensures delay always at least Value seconds)
     }
+  }
+}
+
+void AlarmClass::setDOWs(const timeDayOfWeek_t *DOWs, uint8_t nbDOW) {
+  this->DOWs = 0;
+  if (DOWs != NULL) {
+    for (int i = 0; i < nbDOW; i++) {
+      unsigned short DOW;
+      switch (DOWs[i]) {
+        case dowSunday:
+          DOW = 0x01;
+          break;
+        case dowMonday:
+          DOW = 0x02;
+          break;
+        case dowTuesday:
+          DOW = 0x04;
+          break;
+        case dowWednesday:
+          DOW = 0x08;
+          break;
+        case dowThursday:
+          DOW = 0x10;
+          break;
+        case dowFriday:
+          DOW = 0x20;
+          break;
+        case dowSaturday:
+          DOW = 0x40;
+          break;
+        case dowInvalid:
+        default:
+          DOW = 0x00;
+          break;
+      }
+      this->DOWs = this->DOWs | DOW;
+    }
+  }
+}
+
+boolean AlarmClass::isSetFor(const timeDayOfWeek_t DOW) {
+  switch (DOW) {
+    case dowSunday:
+      return (DOWs & 0x01) != 0x00;
+      break;
+    case dowMonday:
+      return (DOWs & 0x02) != 0x00;
+      break;
+    case dowTuesday:
+      return (DOWs & 0x04) != 0x00;
+      break;
+    case dowWednesday:
+      return (DOWs & 0x08) != 0x00;
+      break;
+    case dowThursday:
+      return (DOWs & 0x10) != 0x00;
+      break;
+    case dowFriday:
+      return (DOWs & 0x20) != 0x00;
+      break;
+    case dowSaturday:
+      return (DOWs & 0x40) != 0x00;
+      break;
+    case dowInvalid:
+    default:
+      return false;
+      break;
   }
 }
 
@@ -279,9 +377,12 @@ time_t TimeAlarmsClass::getNextTrigger(AlarmID_t ID) const
 }
 
 // attempt to create an alarm and return true if successful
-AlarmID_t TimeAlarmsClass::create(time_t value, OnTick_t onTickHandler, uint8_t isOneShot, dtAlarmPeriod_t alarmType)
+AlarmID_t TimeAlarmsClass::create(const timeDayOfWeek_t DOWs[], uint8_t nbDOW, time_t value,
+    OnTick_t onTickHandler, uint8_t isOneShot, dtAlarmPeriod_t alarmType)
 {
-  if ( ! ( (dtIsAlarm(alarmType) && now() < SECS_PER_YEAR) || (dtUseAbsoluteValue(alarmType) && (value == 0)) ) ) {
+  if ( ! ( (dtIsAlarm(alarmType) && now() < SECS_PER_YEAR) || (dtUseAbsoluteValue(alarmType) && (value == 0))
+      || (alarmType != dtMultiWeeklyAlarm && nbDOW > 1) || (alarmType == dtMultiWeeklyAlarm && nbDOW <= 1)
+      || (nbDOW == 1) ) ) {
     // only create alarm ids if the time is at least Jan 1 1971
     for (uint8_t id = 0; id < dtNBR_ALARMS; id++) {
       if (Alarm[id].Mode.alarmType == dtNotAllocated) {
@@ -289,6 +390,7 @@ AlarmID_t TimeAlarmsClass::create(time_t value, OnTick_t onTickHandler, uint8_t 
         Alarm[id].onTickHandler = onTickHandler;
         Alarm[id].Mode.isOneShot = isOneShot;
         Alarm[id].Mode.alarmType = alarmType;
+        Alarm[id].setDOWs(DOWs, nbDOW);
         Alarm[id].value = value;
         enable(id);
         return id;  // alarm created ok
