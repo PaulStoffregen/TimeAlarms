@@ -22,13 +22,15 @@ This calls a `MorningAlarm()` function in a sketch once only (when the time is n
 This would call the function `WeeklyAlarm()` at 9:15am every Monday.
 
 * You can also specify an alarm to trigger every week on multiple days of week at given time of day:
+  ```c++
   timeDayOfWeek_t dows[] = {dowMonday, dowFriday};
   Alarm.alarmRepeat(dows, 2, 9,15,0, MondayFridayMorningAlarm);
+  ```
   This would call the function MondayFridayMorningAlarm() at 9:15am every Monday and Friday.
   Note that the second parameter need to be the number of day of the week the alarm should trigger on.
 
 * If you want the alarm to trigger once only on a particular day and time you can do this:
-   Alarm.alarmOnce(dowMonday, 9,15,0, MondayMorningAlarm);  
+   `Alarm.alarmOnce(dowMonday, 9,15,0, MondayMorningAlarm);`
 This would call the function MondayMorning() Alarm on the next Monday at 9:15am.
 
 * Timers trigger tasks that occur after a specified interval of time has passed.
@@ -68,6 +70,9 @@ void setup()
   Alarm.alarmRepeat(8,30,0, MorningAlarm);  // 8:30am every day
   Alarm.alarmRepeat(17,45,0,EveningAlarm);  // 5:45pm every day
   Alarm.alarmRepeat(dowSaturday,8,30,30,WeeklyAlarm);  // 8:30:30 every Saturday
+  
+  timeDayOfWeek_t dows[] = {dowMonday, dowFriday};     
+  Alarm.alarmRepeat(dows, 2, 8,30,0, WeeklyAlarm);  // 8:30:00 Every Monday and Friday
 
 
   Alarm.timerRepeat(15, Repeats);            // timer for every 15 seconds    
