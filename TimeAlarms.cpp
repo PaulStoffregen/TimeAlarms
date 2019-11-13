@@ -380,9 +380,7 @@ time_t TimeAlarmsClass::getNextTrigger(AlarmID_t ID) const
 AlarmID_t TimeAlarmsClass::create(const timeDayOfWeek_t DOWs[], uint8_t nbDOW, time_t value,
     OnTick_t onTickHandler, uint8_t isOneShot, dtAlarmPeriod_t alarmType)
 {
-  if ( ! ( (dtIsAlarm(alarmType) && now() < SECS_PER_YEAR) || (dtUseAbsoluteValue(alarmType) && (value == 0))
-      || (alarmType != dtMultiWeeklyAlarm && nbDOW > 1) || (alarmType == dtMultiWeeklyAlarm && nbDOW <= 1)
-      || (nbDOW == 1) ) ) {
+  if ( ! ( (dtIsAlarm(alarmType) && now() < SECS_PER_YEAR) || (dtUseAbsoluteValue(alarmType) && (value == 0))) ) {
     // only create alarm ids if the time is at least Jan 1 1971
     for (uint8_t id = 0; id < dtNBR_ALARMS; id++) {
       if (Alarm[id].Mode.alarmType == dtNotAllocated) {
