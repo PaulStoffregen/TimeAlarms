@@ -29,6 +29,8 @@ void setup() {
   Alarm.alarmRepeat(8,30,0, MorningAlarm);  // 8:30am every day
   Alarm.alarmRepeat(17,45,0,EveningAlarm);  // 5:45pm every day
   Alarm.alarmRepeat(dowSaturday,8,30,30,WeeklyAlarm);  // 8:30:30 every Saturday
+  timeDayOfWeek_t dows[] = {dowMonday, dowWednesday, dowSunday};
+  Alarm.alarmRepeat(dows,3,18,15,0,MultiWeeklyAlarm); // 6:15pm every Monday, Wednesday and Sunday
 
   // create timers, to trigger relative to when they're created
   Alarm.timerRepeat(15, Repeats);           // timer for every 15 seconds
@@ -52,6 +54,10 @@ void EveningAlarm() {
 
 void WeeklyAlarm() {
   Serial.println("Alarm: - its Monday Morning");
+}
+
+void MultiWeeklyAlarm() {
+  Serial.println("Alarm: - its Monday, Wednesday or Sunday Evening");
 }
 
 void ExplicitAlarm() {
