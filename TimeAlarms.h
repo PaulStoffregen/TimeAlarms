@@ -134,6 +134,11 @@ public:
     if (value < 0) return dtINVALID_ALARM_ID;
     return create(DOWs, nbDOW, value, onTickHandler, false, dtMultiWeeklyAlarm);
   }
+  
+  AlarmID_t alarmRepeatValue(const timeDayOfWeek_t *DOWs, uint8_t nbDOW, time_t value, OnTick_t onTickHandler) {    
+    if (value < 0) return dtINVALID_ALARM_ID;
+    return create(DOWs, nbDOW, value, onTickHandler, false, dtMultiWeeklyAlarm);
+  }
 
   // trigger once after the given number of seconds
   AlarmID_t timerOnce(time_t value, OnTick_t onTickHandler) {
