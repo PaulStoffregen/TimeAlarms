@@ -209,6 +209,13 @@ void TimeAlarmsClass::disable(AlarmID_t ID)
   }
 }
 
+bool TimeAlarmsClass::isEnabled(AlarmID_t ID)
+{
+  if (isAllocated(ID)) {
+    return Alarm[ID].Mode.isEnabled;
+  }
+}
+
 // write the given value to the given alarm
 void TimeAlarmsClass::write(AlarmID_t ID, time_t value)
 {
@@ -220,7 +227,7 @@ void TimeAlarmsClass::write(AlarmID_t ID, time_t value)
 }
 
 // return the value for the given alarm ID
-time_t TimeAlarmsClass::read(AlarmID_t ID) const
+time_t TimeAlarmsClass::read(AlarmID_t ID)
 {
   if (isAllocated(ID)) {
     return Alarm[ID].value ;
@@ -230,7 +237,7 @@ time_t TimeAlarmsClass::read(AlarmID_t ID) const
 }
 
 // return the alarm type for the given alarm ID
-dtAlarmPeriod_t TimeAlarmsClass::readType(AlarmID_t ID) const
+dtAlarmPeriod_t TimeAlarmsClass::readType(AlarmID_t ID)
 {
   if (isAllocated(ID)) {
     return (dtAlarmPeriod_t)Alarm[ID].Mode.alarmType ;
@@ -251,7 +258,7 @@ void TimeAlarmsClass::free(AlarmID_t ID)
 }
 
 // returns the number of allocated timers
-uint8_t TimeAlarmsClass::count() const
+uint8_t TimeAlarmsClass::count()
 {
   uint8_t c = 0;
   for(uint8_t id = 0; id < dtNBR_ALARMS; id++) {
@@ -261,20 +268,20 @@ uint8_t TimeAlarmsClass::count() const
 }
 
 // returns true only if id is allocated and the type is a time based alarm, returns false if not allocated or if its a timer
-bool TimeAlarmsClass::isAlarm(AlarmID_t ID) const
+bool TimeAlarmsClass::isAlarm(AlarmID_t ID)
 {
   return( isAllocated(ID) && dtIsAlarm(Alarm[ID].Mode.alarmType) );
 }
 
 // returns true if this id is allocated
-bool TimeAlarmsClass::isAllocated(AlarmID_t ID) const
+bool TimeAlarmsClass::isAllocated(AlarmID_t ID)
 {
   return (ID < dtNBR_ALARMS && Alarm[ID].Mode.alarmType != dtNotAllocated);
 }
 
 // returns the currently triggered alarm id
 // returns dtINVALID_ALARM_ID if not invoked from within an alarm handler
-AlarmID_t TimeAlarmsClass::getTriggeredAlarmId() const
+AlarmID_t TimeAlarmsClass::getTriggeredAlarmId()
 {
   if (isServicing) {
     return servicedAlarmId;  // new private data member used instead of local loop variable i in serviceAlarms();
@@ -287,10 +294,9 @@ AlarmID_t TimeAlarmsClass::getTriggeredAlarmId() const
 void TimeAlarmsClass::delay(unsigned long ms)
 {
   unsigned long start = millis();
-  do {
+  while (millis() - start  <= ms) {
     serviceAlarms();
-    yield();
-  } while (millis() - start  <= ms);
+  }
 }
 
 void TimeAlarmsClass::waitForDigits( uint8_t Digits, dtUnits_t Units)
@@ -309,7 +315,7 @@ void TimeAlarmsClass::waitForRollover( dtUnits_t Units)
   waitForDigits(0, Units);
 }
 
-uint8_t TimeAlarmsClass::getDigitsNow( dtUnits_t Units) const
+uint8_t TimeAlarmsClass::getDigitsNow( dtUnits_t Units)
 {
   time_t time = now();
   if (Units == dtSecond) return numberOfSeconds(time);
@@ -320,7 +326,7 @@ uint8_t TimeAlarmsClass::getDigitsNow( dtUnits_t Units) const
 }
 
 //returns isServicing
-bool TimeAlarmsClass::getIsServicing() const
+bool TimeAlarmsClass::getIsServicing()
 {
   return isServicing;
 }
@@ -350,30 +356,18 @@ void TimeAlarmsClass::serviceAlarms()
 }
 
 // returns the absolute time of the next scheduled alarm, or 0 if none
-time_t TimeAlarmsClass::getNextTrigger() const
+time_t TimeAlarmsClass::getNextTrigger()
 {
-  time_t nextTrigger = 0;
+  time_t nextTrigger = (time_t)0xffffffff;  // the max time value
 
   for (uint8_t id = 0; id < dtNBR_ALARMS; id++) {
     if (isAllocated(id)) {
-      if (nextTrigger == 0) {
-        nextTrigger = Alarm[id].nextTrigger;
-      }
-      else if (Alarm[id].nextTrigger <  nextTrigger) {
+      if (Alarm[id].nextTrigger <  nextTrigger) {
         nextTrigger = Alarm[id].nextTrigger;
       }
     }
   }
-  return nextTrigger;
-}
-
-time_t TimeAlarmsClass::getNextTrigger(AlarmID_t ID) const
-{
-  if (isAllocated(ID)) {
-    return Alarm[ID].nextTrigger;
-  } else {
-    return 0;
-  }
+  return nextTrigger == (time_t)0xffffffff ? 0 : nextTrigger;
 }
 
 // attempt to create an alarm and return true if successful
@@ -400,3 +394,4 @@ AlarmID_t TimeAlarmsClass::create(const timeDayOfWeek_t DOWs[], uint8_t nbDOW, t
 
 // make one instance for the user to use
 TimeAlarmsClass Alarm = TimeAlarmsClass() ;
+
