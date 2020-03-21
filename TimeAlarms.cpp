@@ -71,7 +71,7 @@ void AlarmClass::updateNextTrigger()
         // if this is a multi weekly alarm
         boolean updated = false;
 
-        for (int dayIndex = (dowSunday-1); dayIndex != (dowSaturday-1); dayIndex++) {
+        for (int dayIndex = dowSunday; dayIndex <= dowSaturday; dayIndex++) {
           // find the next alarm day this week
           timeDayOfWeek_t day = static_cast<timeDayOfWeek_t>(dayIndex);
           if (isSetFor(day)) {
@@ -87,7 +87,7 @@ void AlarmClass::updateNextTrigger()
 
         if (!updated) {
           // If all set alarm for this week are passed
-          for (int dayIndex = (dowSunday-1); dayIndex != (dowSaturday-1); dayIndex++) {
+          for (int dayIndex = dowSunday; dayIndex != dowSaturday; dayIndex++) {
             // find the next alarm day next week
             timeDayOfWeek_t day = static_cast<timeDayOfWeek_t>(dayIndex);
             if (isSetFor(day)) {
