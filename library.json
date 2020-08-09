@@ -12,5 +12,11 @@
 {
     "type": "git",
     "url": "https://github.com/PaulStoffregen/TimeAlarms"
-}
+},
+"dependencies": [
+    {
+      "name": "Time",
+      "version": "^1.6.0"
+    }
+]
 }
