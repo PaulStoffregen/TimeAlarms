@@ -162,6 +162,12 @@ uint8_t TimeAlarmsClass::count() const
   return c;
 }
 
+// returns true only if id is allocated and alarm is enabled, returns false if not allocated or disabled
+bool TimeAlarmsClass::isEnabled(AlarmID_t ID) const
+{
+  return( isAllocated(ID) && Alarm[ID].Mode.isEnabled );
+}
+
 // returns true only if id is allocated and the type is a time based alarm, returns false if not allocated or if its a timer
 bool TimeAlarmsClass::isAlarm(AlarmID_t ID) const
 {

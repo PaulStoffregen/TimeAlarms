@@ -166,6 +166,7 @@ private:  // the following methods are for testing and are not documented as par
   time_t getNextTrigger(AlarmID_t ID) const;      // returns the time of scheduled alarm
   bool isAllocated(AlarmID_t ID) const;           // returns true if this id is allocated
   bool isAlarm(AlarmID_t ID) const;               // returns true if id is for a time based alarm, false if its a timer or not allocated
+  bool isEnabled(AlarmID_t ID) const;             // returns true if id is for a enabled alarm, false if disabled or not allocated
 };
 
 extern TimeAlarmsClass Alarm;  // make an instance for the user
