@@ -42,6 +42,7 @@ typedef enum {
   dtExplicitAlarm,
   dtDailyAlarm,
   dtWeeklyAlarm,
+  dtMultiWeeklyAlarm,
   dtLastAlarmType
 } dtAlarmPeriod_t ; // in future: dtBiweekly, dtMonthly, dtAnnual
 
@@ -65,6 +66,9 @@ public:
   AlarmClass();
   OnTick_t onTickHandler;
   void updateNextTrigger();
+  void setDOWs(const timeDayOfWeek_t *DOWs, uint8_t nbDOW);
+  boolean isSetFor(const timeDayOfWeek_t DOW);
+  unsigned short DOWs;
   time_t value;
   time_t nextTrigger;
   AlarmMode_t Mode;
@@ -78,7 +82,8 @@ private:
   void serviceAlarms();
   uint8_t isServicing;
   uint8_t servicedAlarmId; // the alarm currently being serviced
-  AlarmID_t create(time_t value, OnTick_t onTickHandler, uint8_t isOneShot, dtAlarmPeriod_t alarmType);
+  AlarmID_t create(const timeDayOfWeek_t DOWs[], uint8_t nbDOW, time_t value, OnTick_t onTickHandler,
+    uint8_t isOneShot, dtAlarmPeriod_t alarmType);
 
 public:
   TimeAlarmsClass();
@@ -87,13 +92,13 @@ public:
   // trigger once at the given time in the future
   AlarmID_t triggerOnce(time_t value, OnTick_t onTickHandler) {
     if (value <= 0) return dtINVALID_ALARM_ID;
-    return create(value, onTickHandler, true, dtExplicitAlarm);
+    return create(NULL, 0, value, onTickHandler, true, dtExplicitAlarm);
   }
 
   // trigger once at given time of day
   AlarmID_t alarmOnce(time_t value, OnTick_t onTickHandler) {
     if (value <= 0 || value > SECS_PER_DAY) return dtINVALID_ALARM_ID;
-    return create(value, onTickHandler, true, dtDailyAlarm);
+    return create(NULL, 0, value, onTickHandler, true, dtDailyAlarm);
   }
   AlarmID_t alarmOnce(const int H, const int M, const int S, OnTick_t onTickHandler) {
     return alarmOnce(AlarmHMS(H,M,S), onTickHandler);
@@ -103,13 +108,13 @@ public:
   AlarmID_t alarmOnce(const timeDayOfWeek_t DOW, const int H, const int M, const int S, OnTick_t onTickHandler) {
     time_t value = (DOW-1) * SECS_PER_DAY + AlarmHMS(H,M,S);
     if (value <= 0) return dtINVALID_ALARM_ID;
-    return create(value, onTickHandler, true, dtWeeklyAlarm);
+    return create(NULL, 0, value, onTickHandler, true, dtWeeklyAlarm);
   }
 
   // trigger daily at given time of day
   AlarmID_t alarmRepeat(time_t value, OnTick_t onTickHandler) {
     if (value > SECS_PER_DAY) return dtINVALID_ALARM_ID;
-    return create(value, onTickHandler, false, dtDailyAlarm);
+    return create(NULL, 0, value, onTickHandler, false, dtDailyAlarm);
   }
   AlarmID_t alarmRepeat(const int H, const int M, const int S, OnTick_t onTickHandler) {
     return alarmRepeat(AlarmHMS(H,M,S), onTickHandler);
@@ -119,13 +124,21 @@ public:
   AlarmID_t alarmRepeat(const timeDayOfWeek_t DOW, const int H, const int M, const int S, OnTick_t onTickHandler) {
     time_t value = (DOW-1) * SECS_PER_DAY + AlarmHMS(H,M,S);
     if (value <= 0) return dtINVALID_ALARM_ID;
-    return create(value, onTickHandler, false, dtWeeklyAlarm);
+    return create(NULL, 0, value, onTickHandler, false, dtWeeklyAlarm);
+  }
+
+  // trigger multi weekly at a specific days and time
+  AlarmID_t alarmRepeat(const timeDayOfWeek_t *DOWs, uint8_t nbDOW, const int H, const int M, const int S,
+      OnTick_t onTickHandler) {
+    time_t value = AlarmHMS(H,M,S);
+    if (value < 0) return dtINVALID_ALARM_ID;
+    return create(DOWs, nbDOW, value, onTickHandler, false, dtMultiWeeklyAlarm);
   }
 
   // trigger once after the given number of seconds
   AlarmID_t timerOnce(time_t value, OnTick_t onTickHandler) {
     if (value <= 0) return dtINVALID_ALARM_ID;
-    return create(value, onTickHandler, true, dtTimer);
+    return create(NULL, 0, value, onTickHandler, true, dtTimer);
   }
   AlarmID_t timerOnce(const int H, const int M, const int S, OnTick_t onTickHandler) {
     return timerOnce(AlarmHMS(H,M,S), onTickHandler);
@@ -134,7 +147,7 @@ public:
   // trigger at a regular interval
   AlarmID_t timerRepeat(time_t value, OnTick_t onTickHandler) {
     if (value <= 0) return dtINVALID_ALARM_ID;
-    return create(value, onTickHandler, false, dtTimer);
+    return create(NULL, 0, value, onTickHandler, false, dtTimer);
   }
   AlarmID_t timerRepeat(const int H,  const int M,  const int S, OnTick_t onTickHandler) {
     return timerRepeat(AlarmHMS(H,M,S), onTickHandler);
