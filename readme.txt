@@ -16,12 +16,12 @@ If you want the alarm to trigger only once you can use the alarmOnce  method:
 This calls a MorningAlarm() function in a sketch once only (when the time is next 8:30am)
 
 Alarms can be specified to trigger a task repeatedly at a particular day of week and time of day:
-  Alarm.alarmRepeat(dowMonday, 9,15,0, MondayMorningAlarm);  
+  Alarm.alarmRepeat(dowMonday, 9,15,0, WeeklyAlarm);  
 This would call the function WeeklyAlarm() at 9:15am every Monday.
 
 If you want the alarm to trigger once only on a particular day and time you can do this:
    Alarm.alarmOnce(dowMonday, 9,15,0, MondayMorningAlarm);  
-This would call the function MondayMorning() Alarm on the next Monday at 9:15am.
+This would call the function MondayMorningAlarm() Alarm on the next Monday at 9:15am.
 
 Timers trigger tasks that occur after a specified interval of time has passed.
 The timer interval can be specified in seconds, or in hour, minutes and seconds.
@@ -30,7 +30,7 @@ This calls the Repeats() function in your sketch every 15 seconds.
 
 If you want a timer to trigger once only, you can use the timerOnce method:
   Alarm.timerOnce(10, OnceOnly);             // called once after 10 seconds 
-This calls the onceOnly() function in a sketch 10 seconds after the timer is created. 
+This calls the OnceOnly() function in a sketch 10 seconds after the timer is created. 
 
 If you want to trigger once at a specified date and time you can use the trigger Once() method:
   Alarm. triggerOnce(time_t value,  explicitAlarm); // value specifies a date and time
