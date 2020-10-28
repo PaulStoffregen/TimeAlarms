@@ -11,6 +11,8 @@
 #define dtNBR_ALARMS 6   // max is 255
 #elif defined(ESP8266)
 #define dtNBR_ALARMS 20  // for esp8266 chip - max is 255
+#elif defined(ARDUINO_ARCH_MBED)
+#define dtNBR_ALARMS 255  // for nrf52 and smt32H7 - max is 255
 #else
 #define dtNBR_ALARMS 12  // assume non-AVR has more memory
 #endif
