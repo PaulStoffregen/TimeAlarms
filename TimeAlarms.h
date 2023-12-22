@@ -56,7 +56,7 @@ typedef AlarmID_t AlarmId;  // Arduino friendly name
 #define dtINVALID_TIME     (time_t)(-1)
 #define AlarmHMS(_hr_, _min_, _sec_) (_hr_ * SECS_PER_HOUR + _min_ * SECS_PER_MIN + _sec_)
 
-typedef void (*OnTick_t)();  // alarm callback function typedef
+typedef std::function<void()> OnTick_t;  // alarm callback function typedef
 
 // class defining an alarm instance, only used by dtAlarmsClass
 class AlarmClass

@@ -243,7 +243,7 @@ void TimeAlarmsClass::serviceAlarms()
           Alarm[servicedAlarmId].updateNextTrigger();
         }
         if (TickHandler != NULL) {
-          (*TickHandler)();     // call the handler
+          TickHandler();     // call the handler
         }
       }
     }
