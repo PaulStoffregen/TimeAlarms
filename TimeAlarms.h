@@ -56,7 +56,7 @@ typedef AlarmID_t AlarmId;  // Arduino friendly name
 #define dtINVALID_TIME     (time_t)(-1)
 #define AlarmHMS(_hr_, _min_, _sec_) (_hr_ * SECS_PER_HOUR + _min_ * SECS_PER_MIN + _sec_)
 
-typedef void (*OnTick_t)();  // alarm callback function typedef
+typedef std::function<void()> OnTick_t;  // alarm callback function typedef
 
 // class defining an alarm instance, only used by dtAlarmsClass
 class AlarmClass
@@ -75,7 +75,6 @@ class TimeAlarmsClass
 {
 private:
   AlarmClass Alarm[dtNBR_ALARMS];
-  void serviceAlarms();
   uint8_t isServicing;
   uint8_t servicedAlarmId; // the alarm currently being serviced
   AlarmID_t create(time_t value, OnTick_t onTickHandler, uint8_t isOneShot, dtAlarmPeriod_t alarmType);
@@ -83,7 +82,7 @@ private:
 public:
   TimeAlarmsClass();
   // functions to create alarms and timers
-
+    void serviceAlarms();
   // trigger once at the given time in the future
   AlarmID_t triggerOnce(time_t value, OnTick_t onTickHandler) {
     if (value <= 0) return dtINVALID_ALARM_ID;
